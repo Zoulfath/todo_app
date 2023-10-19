@@ -1,11 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TodosModule } from './todos/todos.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { Todo } from './todos/entities/todo.entity';
 
+console.log(process.env.DATABASE_URL);
 @Module({
-  imports: [TodosModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      entities: [Todo],
+      synchronize: true,
+    }),
+    TodosModule,
+  ],
 })
 export class AppModule {}
